@@ -488,3 +488,10 @@ Epoch 480, Loss 0.1153103444881602, Correct 49, Time 0.10874223709106445 seconds
 Epoch 490, Loss 1.394527870999093, Correct 49, Time 0.25347256660461426 seconds
 Average Time Per Epoch: 0.12415481187059789 s
 ```
+
+## GPU
+
+50 Points, 100 Hidden Layers, 0.05 Learning Rate
+
+Simple:
+```

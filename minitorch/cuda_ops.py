@@ -343,7 +343,7 @@ def tensor_reduce(
 
                 step = 1
                 while step < BLOCK_DIM:
-                    if (thread_index % (step * 2) == 0):
+                    if thread_index % (step * 2) == 0:
                         shared_mem[thread_index] = fn(
                             shared_mem[thread_index], shared_mem[thread_index + step]
                         )
