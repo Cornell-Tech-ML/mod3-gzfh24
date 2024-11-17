@@ -272,7 +272,7 @@ class TensorData:
         assert list(sorted(order)) == list(
             range(len(self.shape))
         ), f"Must give a position to each dimension. Shape: {self.shape} Order: {order}"
-        
+
         return TensorData(
             self._storage,
             tuple([self.shape[o] for o in order]),

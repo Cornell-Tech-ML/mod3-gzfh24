@@ -30,6 +30,7 @@ Fn = TypeVar("Fn")
 
 
 def njit(fn: Fn, **kwargs: Any) -> Fn:
+    """Decorator to JIT compile functions."""
     return _njit(inline="always", **kwargs)(fn)  # type: ignore
 
 
@@ -169,9 +170,11 @@ def tensor_map(
         in_strides: Strides,
     ) -> None:
         # TODO: Implement for Task 3.1.
-        if np.array_equal(in_strides, out_strides) and np.array_equal(in_shape, out_shape):
+        if np.array_equal(in_strides, out_strides) and np.array_equal(
+            in_shape, out_shape
+        ):
             for i in prange(len(out)):
-                out[i] = fn(in_storage[i]) # type: ignore
+                out[i] = fn(in_storage[i])  # type: ignore
         else:
             for i in prange(len(out)):
                 out_index: Index = np.empty(MAX_DIMS, dtype=np.int32)
@@ -220,11 +223,14 @@ def tensor_zip(
         b_strides: Strides,
     ) -> None:
         # TODO: Implement for Task 3.1.
-        if (np.array_equal(a_strides, b_strides) and np.array_equal(a_strides, out_strides)
-            and np.array_equal(a_shape, b_shape) and np.array_equal(a_shape, out_shape)
+        if (
+            np.array_equal(a_strides, b_strides)
+            and np.array_equal(a_strides, out_strides)
+            and np.array_equal(a_shape, b_shape)
+            and np.array_equal(a_shape, out_shape)
         ):
             for i in prange(len(out)):
-                out[i] = fn(a_storage[i], b_storage[i]) # type: ignore
+                out[i] = fn(a_storage[i], b_storage[i])  # type: ignore
         else:
             for i in prange(len(out)):
                 out_index: Index = np.empty(MAX_DIMS, dtype=np.int32)
@@ -346,6 +352,7 @@ def _tensor_matrix_multiply(
                     b_pos += b_strides[-2]
                 out_pos = i * out_strides[0] + j * out_strides[-2] + k * out_strides[-1]
                 out[out_pos] = acc
+
 
 tensor_matrix_multiply = njit(_tensor_matrix_multiply, parallel=True)
 assert tensor_matrix_multiply is not None
