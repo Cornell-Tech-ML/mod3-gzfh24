@@ -4,14 +4,16 @@ import numba
 
 import minitorch
 
+import time
+
 datasets = minitorch.datasets
 FastTensorBackend = minitorch.TensorBackend(minitorch.FastOps)
 if numba.cuda.is_available():
     GPUBackend = minitorch.TensorBackend(minitorch.CudaOps)
 
 
-def default_log_fn(epoch, total_loss, correct, losses):
-    print("Epoch ", epoch, " loss ", total_loss, "correct", correct)
+def default_log_fn(epoch, total_loss, correct, losses, epoch_time):
+    print(f"Epoch {epoch}, Loss {total_loss}, Correct {correct}, Time {epoch_time} seconds")
 
 
 def RParam(*shape, backend):
@@ -31,8 +33,7 @@ class Network(minitorch.Module):
     def forward(self, x):
         h = self.layer1.forward(x).relu()
         h = self.layer2.forward(h).relu()
-        h = self.layer3.forward(h).sigmoid()
-        return h
+        return self.layer3.forward(h).sigmoid()
 
 
 class Linear(minitorch.Module):
@@ -45,7 +46,6 @@ class Linear(minitorch.Module):
         self.out_size = out_size
 
     def forward(self, x):
-        # TODO: Implement for Task 3.5.
         return x @ self.weights.value + self.bias.value
 
 
@@ -69,8 +69,10 @@ class FastTrain:
         optim = minitorch.SGD(self.model.parameters(), learning_rate)
         BATCH = 10
         losses = []
+        epoch_times = []
 
         for epoch in range(max_epochs):
+            start = time.time()
             total_loss = 0.0
             c = list(zip(data.X, data.y))
             random.shuffle(c)
@@ -92,6 +94,10 @@ class FastTrain:
                 # Update
                 optim.step()
 
+            end = time.time()
+            epoch_time = end - start
+            epoch_times.append(epoch_time)
+
             losses.append(total_loss)
             # Logging
             if epoch % 10 == 0 or epoch == max_epochs:
@@ -100,8 +106,11 @@ class FastTrain:
                 out = self.model.forward(X).view(y.shape[0])
                 y2 = minitorch.tensor(data.y)
                 correct = int(((out.detach() > 0.5) == y2).sum()[0])
-                log_fn(epoch, total_loss, correct, losses)
+                log_fn(epoch, total_loss, correct, losses, epoch_time)
 
+        # Average epoch time
+        average_time = sum(epoch_times[1:]) / (len(epoch_times)-1)
+        print(f"Average Time Per Epoch: {average_time} s")
 
 if __name__ == "__main__":
     import argparse
