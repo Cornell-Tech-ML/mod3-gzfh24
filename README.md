@@ -318,6 +318,34 @@ No allocation hoisting found
 None
 ```
 
+# 3.4
+
+Timing summary (in seconds)
+
+Size: 64
+
+    fast: 0.00376
+    gpu: 0.00678
+
+Size: 128
+
+    fast: 0.01747
+    gpu: 0.01527
+Size: 256
+
+    fast: 0.09962
+    gpu: 0.05205
+Size: 512
+
+    fast: 1.00940
+    gpu: 0.22451
+Size: 1024
+
+    fast: 9.01662
+    gpu: 1.00840
+
+![graph](/images/image.png)
+
 # 3.5
 
 ## CPU
